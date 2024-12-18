@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.config = void 0;
 exports.middleware = middleware;
 const server_1 = require("next/server");
-const auth_1 = require("./lib/auth");
+const auth_1 = require("../src/lib/auth");
 function middleware(request) {
     return __awaiter(this, void 0, void 0, function* () {
         // Protected routes
