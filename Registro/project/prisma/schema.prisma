@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  civilUnionsAsPartner1 CivilUnion[] @relation("Partner1")
+  civilUnionsAsPartner2 CivilUnion[] @relation("Partner2")
+  approvedUnions       CivilUnion[] @relation("Approver")
+}
+
+model CivilUnion {
+  id              String   @id @default(cuid())
+  startDate       DateTime
+  status          Status   @default(PENDING)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  rejectionReason String?
+
+  // Relations
+  partner1Id String
+  partner1   User   @relation("Partner1", fields: [partner1Id], references: [id])
+  partner2Id String
+  partner2   User   @relation("Partner2", fields: [partner2Id], references: [id])
+  
+  approvedById String?
+  approvedBy   User?   @relation("Approver", fields: [approvedById], references: [id])
+
+  // Documents and witnesses will be added in separate tables
+}
+
+enum Role {
+  USER
+  EMPLOYEE
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
